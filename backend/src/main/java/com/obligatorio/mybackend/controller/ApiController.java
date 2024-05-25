@@ -9,8 +9,32 @@ import org.springframework.http.ResponseEntity;
 @RequestMapping("/api")
 public class ApiController {
 
-    @GetMapping("/getSong")
+    @GetMapping("/hello")
     public ResponseEntity<String> getSong() {
         return ResponseEntity.ok("Hello from Java backend!");
-    }   
+    }
+    @GetMapping("/button1")
+    public ResponseEntity<String> handleButton1() {
+        return ResponseEntity.ok("Response from button 1");
+    }
+
+    @GetMapping("/button2")
+    public ResponseEntity<String> handleButton2() {
+        return ResponseEntity.ok("Response from button 2");
+    }
+
+    @GetMapping("/button3")
+    public ResponseEntity<String> handleButton3() {
+        return ResponseEntity.ok("Response from button 3");
+    }
+
+    @GetMapping("/button4")
+    public ResponseEntity<String> handleButton4() {
+        return ResponseEntity.ok("Response from button 4");
+    }
+
+    @GetMapping("/button5")
+    public ResponseEntity<String> handleButton5() {
+        return ResponseEntity.ok("Response from button 5");
+    }
 }
