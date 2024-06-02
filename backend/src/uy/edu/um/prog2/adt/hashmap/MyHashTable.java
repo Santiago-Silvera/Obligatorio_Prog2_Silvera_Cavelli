@@ -30,7 +30,6 @@ public class MyHashTable<K, V> implements MyHash<K,V> {
             resize();
         }
         int index = hash(key);
-//        System.out.println(index);
         while (table[index] != null) {
             if (table[index].getKey() == key) {
                 if (table[index].isDeleted()) {
