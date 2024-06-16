@@ -86,6 +86,23 @@ public class MyHashTable<K, V> implements MyHash<K,V> {
     }
 
     @Override
+    public V get(K key) {
+        int index = hash(key);
+        // Si en la tabla tenemos null no hace nada de esto y tira derecho para el null
+        if (table[index] != null) {
+            // Vamos buscando hasta encontrar o un null, en cuyo caso salimos y devolvemos null
+            // o encontramos la key
+            while (table[index] != null) {
+                if (table[index].getKey() == key && !table[index].isDeleted()) {
+                    return table[index].getValue();
+                }
+                index = (index + 1) % CAPACITY;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public int size() {
         return this.size;
     }

@@ -1,6 +1,6 @@
 package uy.edu.um.prog2.adt.linkedlist;
 
-public interface MyList<T> {
+public interface MyList<T> extends Iterable<T> {
 
     /**
      * Adds a new element to the list.

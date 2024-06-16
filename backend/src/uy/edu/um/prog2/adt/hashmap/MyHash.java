@@ -30,6 +30,14 @@ public interface MyHash<K, V> {
     V remove(K key);
 
     /**
+     * Gets the key-value pair associated with the given key.
+     *
+     * @param key the key
+     * @return the value that was associated with the key, or null if the key did not exist
+     */
+    V get(K key);
+
+    /**
      * Returns the number of key-value pairs in the hash map.
      *
      * @return the size of the hash map
