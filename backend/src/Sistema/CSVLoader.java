@@ -34,7 +34,7 @@ public class CSVLoader {
                 Song song = createSong(regex, line);
 
                 String country = song.getCountry();
-                String date = song.getDate();
+                Date date = song.getDate();
 
                 if (!topSongsByDateCountry.containsKey(date)) {
                     topSongsByDateCountry.put(date, new MyHashTable<>(50, 0.75f));
@@ -54,7 +54,7 @@ public class CSVLoader {
 
     private static Song createSong(Pattern regex, String line) {
         Matcher matcher = regex.matcher(line);
-        MyList<String> a = new MyLinkedListImpl<>();  // attributes
+        MyList<String> attributes = new MyLinkedListImpl<>();  // attributes
         while (matcher.find()) {
             String attribute = matcher.group();
             attribute = attribute.substring(1, attribute.length() - 1).replace("\"\"", "\"");
@@ -69,7 +69,7 @@ public class CSVLoader {
         int dailyMovement = Integer.parseInt(attributes.get(4));
         int weeklyMovement = Integer.parseInt(attributes.get(5));
         String country = attributes.get(6);
-        String snapshotDate = attributes.get(7);
+        Date snapshotDate = parseDate(attributes.get(7));
         int popularity = Integer.parseInt(attributes.get(8));
         boolean isExplicit = Boolean.parseBoolean(attributes.get(9));
         long duration = Long.parseLong(attributes.get(10));

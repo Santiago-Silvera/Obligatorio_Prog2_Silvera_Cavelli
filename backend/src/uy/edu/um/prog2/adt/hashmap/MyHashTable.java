@@ -1,7 +1,6 @@
 package uy.edu.um.prog2.adt.hashmap;
 
 
-import org.apache.catalina.util.ToStringUtil;
 import uy.edu.um.prog2.adt.linkedlist.NodeWithKeyValue;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +33,7 @@ public class MyHashTable<K, V> implements MyHash<K,V> {
         }
         int index = hash(key);
         while (table[index] != null) {
-            if (table[index].getKey() == key) {
+            if (table[index].getKey().equals(key)) {
                 if (table[index].isDeleted()) {
                     table[index].setValue(value);
                     table[index].setDeleted(false);
