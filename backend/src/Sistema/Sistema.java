@@ -7,6 +7,7 @@ import uy.edu.um.prog2.adt.linkedlist.MyList;
 
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.Scanner;
 
 public class Sistema {
     public static MyHash<String, MyHash<String, MyList<Song>>> topSongsByDateCountry = new MyHashTable<>(50, 0.75f);
