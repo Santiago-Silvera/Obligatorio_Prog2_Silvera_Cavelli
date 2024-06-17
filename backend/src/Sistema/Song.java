@@ -16,7 +16,7 @@ public class Song {
     private int weekly_movement;
     @Getter
     private String country;
-    private Date snapshot_date;
+    private String snapshot_date;
     @Getter
     private int popularity;
     private boolean is_explicit;
@@ -48,7 +48,7 @@ public class Song {
     private float tempo;
     private int time_signature;
 
-    public Song(String spotifyId, String name, String artist, int dailyRank, int dailyMovement, int weeklyMovement, String country, Date snapshotDate, int popularity, boolean isExplicit, long duration, String album_name, Date albumReleaseDate, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int timeSignature) {
+    public Song(String spotifyId, String name, String artist, int dailyRank, int dailyMovement, int weeklyMovement, String country, String snapshotDate, int popularity, boolean isExplicit, long duration, String album_name, Date albumReleaseDate, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int timeSignature) {
         this.spotify_id = spotifyId;
         this.name = name;
         this.artist = artist;
@@ -92,7 +92,7 @@ public class Song {
         return weekly_movement;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return snapshot_date;
     }
 
