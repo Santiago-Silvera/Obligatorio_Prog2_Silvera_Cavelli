@@ -10,7 +10,7 @@ public class Song {
     @Getter
     private String name;
     @Getter
-    private String artist;
+    private String[] artist;
     private int daily_rank;
     private int daily_movement;
     private int weekly_movement;
@@ -48,7 +48,7 @@ public class Song {
     private float tempo;
     private int time_signature;
 
-    public Song(String spotifyId, String name, String artist, int dailyRank, int dailyMovement, int weeklyMovement, String country, String snapshotDate, int popularity, boolean isExplicit, long duration, String album_name, Date albumReleaseDate, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int timeSignature) {
+    public Song(String spotifyId, String name, String[] artist, int dailyRank, int dailyMovement, int weeklyMovement, String country, String snapshotDate, int popularity, boolean isExplicit, long duration, String album_name, Date albumReleaseDate, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int timeSignature) {
         this.spotify_id = spotifyId;
         this.name = name;
         this.artist = artist;

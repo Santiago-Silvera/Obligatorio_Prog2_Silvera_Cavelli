@@ -5,8 +5,8 @@ import uy.edu.um.prog2.adt.hashmap.MyHashTable;
 import uy.edu.um.prog2.adt.linkedlist.MyLinkedListImpl;
 import uy.edu.um.prog2.adt.linkedlist.MyList;
 
+import java.util.Arrays;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.Scanner;
 
 public class Sistema {
@@ -18,12 +18,21 @@ public class Sistema {
         loader.LoadCSV();
         long endTime = System.currentTimeMillis();
         System.out.println("Time elapsed loading CSV: " + (endTime - startTime)/1000 + "s");
-        menu();
+        while(menu()){
+
+        }
     }
 
-    public static void menu() {
+    public static boolean menu() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Bienvenido al sistema de consulta de canciones de Spotify \n Ingrese el número de la consulta que desea realizar: \n 1. Top 10 canciones en un país en un día dado. \n 2. Top 5 canciones que aparecen en más top 50 en un día dado. \n 3. Top 7 artistas que más aparecen en los top 50 para un rango de fechas dado. \n 4. Cantidad de veces que aparece un artista específico en un top 50 en una fecha dada. \n 5. Cantidad de canciones con un tempo en un rango específico para un rango específico de fechas.");
+        System.out.println("Bienvenido al sistema de consulta de canciones de Spotify \n" +
+                "Ingrese el número de la consulta que desea realizar: \n" +
+                " 1. Top 10 canciones en un país en un día dado. \n" +
+                " 2. Top 5 canciones que aparecen en más top 50 en un día dado. \n" +
+                " 3. Top 7 artistas que más aparecen en los top 50 para un rango de fechas dado. \n" +
+                " 4. Cantidad de veces que aparece un artista específico en un top 50 en una fecha dada. \n" +
+                " 5. Cantidad de canciones con un tempo en un rango específico para un rango específico de fechas. \n" +
+                " 6. Salir del sistema. ");
         int option = scanner.nextInt();
         switch (option) {
             case 1:
@@ -34,10 +43,10 @@ public class Sistema {
                 MyList<Song> top = consulta1(date, country);
                 if (top == null) {
                     System.out.println("No data for " + date + " in " + country);
-                    return;
+                    return true;
                 }
                 for (Song song : top) {
-                    System.out.println(song.getName() + " by " + song.getArtist());
+                    System.out.println(song.getName() + " by " + Arrays.toString(song.getArtist()));
                 }
                 break;
             case 2:
@@ -59,7 +68,14 @@ public class Sistema {
             case 5:
                 System.out.println("Sorry bro, no la hice todavia.");
                 break;
+            case 6:
+                System.out.println("Gracias por usar el sistema de consulta de canciones de Spotify");
+                return false;
+            default:
+                System.out.println("Opción inválida");
+                break;
         }
+        return true;
     }
 
     public static MyList<Song> consulta1(String date, String country) {
@@ -109,7 +125,8 @@ public class Sistema {
         MyList<Song> top = topSongsByDateCountry.get(date).get(country);
         int counter = 0;
         for (Song song : top) {
-            if (Objects.equals(song.getArtist(), artist)) counter++;
+            // if artist is in the artist array increase counter
+            if (Arrays.asList(song.getArtist()).contains(artist)) counter++;
         }
         return counter;
     }

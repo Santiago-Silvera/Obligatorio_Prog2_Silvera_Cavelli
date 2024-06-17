@@ -64,15 +64,9 @@ public class CSVLoader {
         // Get the attributes separated
         String spotifyId = attributes.get(0);
         String name = attributes.get(1);
-        String artist = attributes.get(2);
-        int dailyRank;
-        try {
-            dailyRank = Integer.parseInt(attributes.get(3));
-        } catch (NumberFormatException e) {
-            System.out.println("Error en la linea: " + line);
-            System.out.println(attributes.get(3));
-            dailyRank = 0;
-        }
+        // Split the artist string into an array
+        String[] artists = attributes.get(2).split(", ");
+        int dailyRank = Integer.parseInt(attributes.get(3));
         int dailyMovement = Integer.parseInt(attributes.get(4));
         int weeklyMovement = Integer.parseInt(attributes.get(5));
         String country = attributes.get(6);
@@ -95,7 +89,7 @@ public class CSVLoader {
         float tempo = Float.parseFloat(attributes.get(23));
         int timeSignature = Integer.parseInt(attributes.get(24));
         // Return the song
-        return new Song(spotifyId, name, artist, dailyRank, dailyMovement, weeklyMovement, country, snapshotDate, popularity, isExplicit, duration, albumName, albumReleaseDate, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, timeSignature);
+        return new Song(spotifyId, name, artists, dailyRank, dailyMovement, weeklyMovement, country, snapshotDate, popularity, isExplicit, duration, albumName, albumReleaseDate, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, timeSignature);
     }
     public static Date parseDate(String date) {
         try {
