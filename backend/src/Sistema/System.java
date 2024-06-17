@@ -31,13 +31,15 @@ public class System {
         return result;
     }
 
-    public static void consulta2() {
+    public MyList<Song> consulta2(Date date) {
         /*
          Top 5 canciones que aparecen en más top 50 en un día dado. Las canciones deben
          estar ordenadas de manera descendente. Se espera que esta operación sea de
          orden n en notación Big O.
         */
-        return;
+        MyList<Song> cancionesTop5 = new MyLinkedListImpl<>();
+
+        return cancionesTop5;
     }
 
     public static void consulta3() {

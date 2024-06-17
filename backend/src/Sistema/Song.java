@@ -1,3 +1,4 @@
+
 package Sistema;
 
 import lombok.Getter;
@@ -125,3 +126,4 @@ public class Song {
         return Objects.hashCode(spotify_id);
     }
 }
+
