@@ -1,5 +1,6 @@
 package Sistema;
 
+import uy.edu.um.prog2.adt.hashmap.MyHashTable;
 import uy.edu.um.prog2.adt.linkedlist.MyLinkedListImpl;
 import uy.edu.um.prog2.adt.linkedlist.MyList;
 
@@ -28,21 +29,22 @@ public class CSVLoader {
             scanner.nextLine();
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                Pattern regex = Pattern.compile("\"(?:[^\"\\\\]|\\\\.|\"\")*\"");   // magiaGPT
+                Pattern regex = Pattern.compile("\"(?:[^\"\\\\]|\\\\.|\"\")*\"");
                 Song song = createSong(regex, line);
 
                 String country = song.getCountry();
-                Date date = song.getDate();
-                DateCountryPair DCpair = new DateCountryPair(date, country);
-                MyList<Song> songVector;
+                String date = song.getDate();
 
-                if (topSongsByDateCountry.containsKey(DCpair)) {
-                    songVector = topSongsByDateCountry.remove(DCpair);
-                } else {
-                    songVector = new MyLinkedListImpl<>();
+                if (!topSongsByDateCountry.containsKey(date)) {
+                    topSongsByDateCountry.put(date, new MyHashTable<>(50, 0.75f));
+//                    System.out.println("Added date: " + date);
                 }
-                songVector.add(song);
-                topSongsByDateCountry.put(DCpair, songVector);
+                if (!topSongsByDateCountry.get(date).containsKey(country)) {
+                    topSongsByDateCountry.get(date).put(country, new MyLinkedListImpl<>());
+//                    System.out.println("Added country: " + country + " on " + date);
+                }
+                topSongsByDateCountry.get(date).get(country).add(song);
+//                System.out.println("Added song: " + song.getName() + " by " + song.getArtist() + " in " + song.getCountry() + " on " + song.getDate());
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -74,8 +76,7 @@ public class CSVLoader {
         int dailyMovement = Integer.parseInt(attributes.get(4));
         int weeklyMovement = Integer.parseInt(attributes.get(5));
         String country = attributes.get(6);
-        // Create a date that is not depracated
-        Date snapshotDate = parseDate(attributes.get(7));
+        String snapshotDate = attributes.get(7);
         int popularity = Integer.parseInt(attributes.get(8));
         boolean isExplicit = Boolean.parseBoolean(attributes.get(9));
         long duration = Long.parseLong(attributes.get(10));

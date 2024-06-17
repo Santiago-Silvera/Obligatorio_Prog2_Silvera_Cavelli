@@ -10,22 +10,24 @@ import java.util.Date;
 import java.util.Objects;
 
 public class Sistema {
-    public static MyHash<DateCountryPair, MyList<Song>> topSongsByDateCountry = new MyHashTable<>(50, 0.75f);
-    public static ExpiresFilter.XServletOutputStream out;
+    public static MyHash<String, MyHash<String, MyList<Song>>> topSongsByDateCountry = new MyHashTable<>(50, 0.75f);
 
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
         CSVLoader loader = new CSVLoader("C:\\Users\\santi\\Downloads\\universal_top_spotify_songs.csv");
         loader.LoadCSV();
+        long endTime = System.currentTimeMillis();
+        System.out.println("Time elapsed: " + (endTime - startTime)/1000 + "s");
     }
 
-    public static MyList<Song> consulta1(Date date, String country) {
+    public static MyList<Song> consulta1(String date, String country) {
         /*
          Top 10 canciones en un país en un día dado. Este reporte debe incluir el nombre de
          la canción, el artista, y en qué puesto se encuentra en el top. Las canciones deben
          estar ordenadas de manera descendente. El día será ingresado en el formato
          YYYY-MM-DD.
         */
-        MyList<Song> top = topSongsByDateCountry.get(new DateCountryPair(date, country));
+        MyList<Song> top = topSongsByDateCountry.get(date).get(country);
         MyList<Song> result = new MyLinkedListImpl<>();
         for (int i = 0; i < 10; i++) {
             result.add(top.get(i));
@@ -50,11 +52,11 @@ public class Sistema {
         */
     }
 
-    public static int consulta4(Date date, String country, String artist) {
+    public static int consulta4(String date, String country, String artist) {
         /*
          Cantidad de veces que aparece un artista específico en un top 50 en una fecha dada.
         */
-        MyList<Song> top = topSongsByDateCountry.get(new DateCountryPair(date, country));
+        MyList<Song> top = topSongsByDateCountry.get(date).get(country);
         int counter = 0;
         for (Song song : top) {
             if (Objects.equals(song.getArtist(), artist)) counter++;
