@@ -6,6 +6,10 @@ import uy.edu.um.prog2.adt.queue.MyQueue;
 import uy.edu.um.prog2.adt.stack.EmptyStackException;
 import uy.edu.um.prog2.adt.stack.MyStack;
 
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+
 public class MyLinkedListImpl<T> implements MyList<T>, MyQueue<T>, MyStack<T>, MyCircularLinkedList<T>{
 
     private Node<T> first;
@@ -178,5 +182,34 @@ public class MyLinkedListImpl<T> implements MyList<T>, MyQueue<T>, MyStack<T>, M
             return null;
         }
         return get((position % size() + size())% size()); // se corrige sumando size() para evitar que resulte en número negativo
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private Node<T> temp = first;
+
+            @Override
+            public boolean hasNext() {
+                return temp != null;
+            }
+
+            @Override
+            public T next() {
+                T valueToReturn = temp.getValue();
+                temp = temp.getNext();
+                return valueToReturn;
+            }
+        };
+    }
+
+    @Override
+    public void forEach(Consumer<? super T> action) {
+        MyList.super.forEach(action);
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return MyList.super.spliterator();
     }
 }

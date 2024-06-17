@@ -1,5 +1,6 @@
 package Sistema;
 
+import org.apache.catalina.filters.ExpiresFilter;
 import uy.edu.um.prog2.adt.hashmap.MyHash;
 import uy.edu.um.prog2.adt.hashmap.MyHashTable;
 import uy.edu.um.prog2.adt.linkedlist.MyLinkedListImpl;
@@ -8,8 +9,9 @@ import uy.edu.um.prog2.adt.linkedlist.MyList;
 import java.util.Date;
 import java.util.Objects;
 
-public class System {
+public class Sistema {
     public static MyHash<DateCountryPair, MyList<Song>> topSongsByDateCountry = new MyHashTable<>(50, 0.75f);
+    public static ExpiresFilter.XServletOutputStream out;
 
     public static void main(String[] args) {
         CSVLoader loader = new CSVLoader("C:\\Users\\santi\\Downloads\\universal_top_spotify_songs.csv");
