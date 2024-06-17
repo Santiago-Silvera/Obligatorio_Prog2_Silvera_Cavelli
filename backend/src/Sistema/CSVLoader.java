@@ -1,21 +1,20 @@
 
 package Sistema;
 
+import uy.edu.um.prog2.adt.hashmap.MyHashTable;
 import uy.edu.um.prog2.adt.linkedlist.MyLinkedListImpl;
 import uy.edu.um.prog2.adt.linkedlist.MyList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-import static Sistema.System.topSongsByDateCountry;
+import static Sistema.Sistema.topSongsByDateCountry;
 
 
 public class CSVLoader {
@@ -27,73 +26,75 @@ public class CSVLoader {
 
     public void LoadCSV() {
         try (Scanner scanner = new Scanner(new File(path))) {
-            if (scanner.hasNextLine()) {
-                scanner.nextLine();  // Skip the header line
-            }
+            // Start from second line
+            scanner.nextLine();
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 Pattern regex = Pattern.compile("\"(?:[^\"\\\\]|\\\\.|\"\")*\"");
-                Song song = getSong(regex, line);
+                Song song = createSong(regex, line);
 
                 String country = song.getCountry();
-                Date date = song.getDate();
-                DateCountryPair DCpair = new DateCountryPair(date, country);
-                MyList<Song> songVector;
+                String date = song.getDate();
 
-                if (topSongsByDateCountry.containsKey(DCpair)) {
-                    songVector = topSongsByDateCountry.remove(DCpair);
-                } else {
-                    songVector = new MyLinkedListImpl<>();
+                if (!topSongsByDateCountry.containsKey(date)) {
+                    topSongsByDateCountry.put(date, new MyHashTable<>(50, 0.75f));
+//                    System.out.println("Added date: " + date);
                 }
-                songVector.add(song);
-                topSongsByDateCountry.put(DCpair, songVector);
+                if (!topSongsByDateCountry.get(date).containsKey(country)) {
+                    topSongsByDateCountry.get(date).put(country, new MyLinkedListImpl<>());
+//                    System.out.println("Added country: " + country + " on " + date);
+                }
+                topSongsByDateCountry.get(date).get(country).add(song);
+//                System.out.println("Added song: " + song.getName() + " by " + song.getArtist() + " in " + song.getCountry() + " on " + song.getDate());
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static Song getSong(Pattern regex, String line) {
+    private static Song createSong(Pattern regex, String line) {
         Matcher matcher = regex.matcher(line);
         MyList<String> a = new MyLinkedListImpl<>();  // attributes
         while (matcher.find()) {
             String attribute = matcher.group();
             attribute = attribute.substring(1, attribute.length() - 1).replace("\"\"", "\"");
-            a.add(attribute);
+            attributes.add(attribute);
         }
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-
+        // Get the attributes separated
+        String spotifyId = attributes.get(0);
+        String name = attributes.get(1);
+        // Split the artist string into an array
+        String[] artists = attributes.get(2).split(", ");
+        int dailyRank = Integer.parseInt(attributes.get(3));
+        int dailyMovement = Integer.parseInt(attributes.get(4));
+        int weeklyMovement = Integer.parseInt(attributes.get(5));
+        String country = attributes.get(6);
+        String snapshotDate = attributes.get(7);
+        int popularity = Integer.parseInt(attributes.get(8));
+        boolean isExplicit = Boolean.parseBoolean(attributes.get(9));
+        long duration = Long.parseLong(attributes.get(10));
+        String albumName = attributes.get(11);
+        Date albumReleaseDate = parseDate(attributes.get(12));
+        float danceability = Float.parseFloat(attributes.get(13));
+        float energy = Float.parseFloat(attributes.get(14));
+        int key = Integer.parseInt(attributes.get(15));
+        float loudness = Float.parseFloat(attributes.get(16));
+        int mode = Integer.parseInt(attributes.get(17));
+        float speechiness = Float.parseFloat(attributes.get(18));
+        float acousticness = Float.parseFloat(attributes.get(19));
+        float instrumentalness = Float.parseFloat(attributes.get(20));
+        float liveness = Float.parseFloat(attributes.get(21));
+        float valence = Float.parseFloat(attributes.get(22));
+        float tempo = Float.parseFloat(attributes.get(23));
+        int timeSignature = Integer.parseInt(attributes.get(24));
+        // Return the song
+        return new Song(spotifyId, name, artists, dailyRank, dailyMovement, weeklyMovement, country, snapshotDate, popularity, isExplicit, duration, albumName, albumReleaseDate, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, timeSignature);
+    }
+    public static Date parseDate(String date) {
         try {
-            return new Song(
-                    a.get(0),  // spotifyId
-                    a.get(1),  // name
-                    a.get(2),  // artist
-                    Integer.parseInt(a.get(3)),  // dailyRank
-                    Integer.parseInt(a.get(4)),  // dailyMovement
-                    Integer.parseInt(a.get(5)),  // weeklyMovement
-                    a.get(6),  // country
-                    dateFormat.parse(a.get(7)),  // snapshotDate
-                    Integer.parseInt(a.get(8)),  // popularity
-                    Boolean.parseBoolean(a.get(9)),  // isExplicit
-                    Long.parseLong(a.get(10)),  // duration
-                    a.get(11),  // albumName
-                    dateFormat.parse(a.get(12)),  // albumReleaseDate
-                    Float.parseFloat(a.get(13)),  // danceability
-                    Float.parseFloat(a.get(14)),  // energy
-                    Integer.parseInt(a.get(15)),  // key
-                    Float.parseFloat(a.get(16)),  // loudness
-                    Integer.parseInt(a.get(17)),  // mode
-                    Float.parseFloat(a.get(18)),  // speechiness
-                    Float.parseFloat(a.get(19)),  // acousticness
-                    Float.parseFloat(a.get(20)),  // instrumentalness
-                    Float.parseFloat(a.get(21)),  // liveness
-                    Float.parseFloat(a.get(22)),  // valence
-                    Float.parseFloat(a.get(23)),  // tempo
-                    Integer.parseInt(a.get(24))   // timeSignature
-            );
+            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
         } catch (ParseException e) {
-            throw new RuntimeException("Error parsing date", e);
+            return null;
         }
     }
 }
