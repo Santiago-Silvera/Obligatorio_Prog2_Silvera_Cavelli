@@ -12,7 +12,7 @@ public class System {
     public static MyHash<DateCountryPair, MyList<Song>> topSongsByDateCountry = new MyHashTable<>(50, 0.75f);
 
     public static void main(String[] args) {
-        CSVLoader loader = new CSVLoader("C:\\Users\\santi\\Downloads\\universal_top_spotify_songs.csv");
+        CSVLoader loader = new CSVLoader("");
         loader.LoadCSV();
     }
 
