@@ -1,11 +1,14 @@
 package uy.edu.um.prog2.adt.hashmap;
 
 
+import org.apache.catalina.util.ToStringUtil;
 import uy.edu.um.prog2.adt.linkedlist.NodeWithKeyValue;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
+
+import static java.lang.Math.abs;
 
 public class MyHashTable<K, V> implements MyHash<K,V> {
 
@@ -56,7 +59,7 @@ public class MyHashTable<K, V> implements MyHash<K,V> {
         int index = hash(key);
         boolean found = false;
         while (table[index] != null) {
-            if (table[index].getKey() == key && !table[index].isDeleted()) {
+            if (table[index].getKey().equals(key) && !table[index].isDeleted()) {
                 found = true;
                 break;
             }
@@ -88,12 +91,13 @@ public class MyHashTable<K, V> implements MyHash<K,V> {
     @Override
     public V get(K key) {
         int index = hash(key);
+//        System.out.println("Index: " + index);
         // Si en la tabla tenemos null no hace nada de esto y tira derecho para el null
         if (table[index] != null) {
             // Vamos buscando hasta encontrar o un null, en cuyo caso salimos y devolvemos null
             // o encontramos la key
             while (table[index] != null) {
-                if (table[index].getKey() == key && !table[index].isDeleted()) {
+                if (table[index].getKey().equals(key) && !table[index].isDeleted()) {
                     return table[index].getValue();
                 }
                 index = (index + 1) % CAPACITY;
@@ -135,7 +139,7 @@ public class MyHashTable<K, V> implements MyHash<K,V> {
     }
 
     private int hash(K key) {
-        return key.hashCode() % CAPACITY;
+        return abs(key.hashCode() % CAPACITY);
     }
 
     public void showHash() {
