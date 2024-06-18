@@ -7,6 +7,9 @@ import lombok.Setter;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static java.lang.Math.abs;
 
 public class MyHashTable<K, V> implements MyHash<K,V> {
@@ -147,4 +150,14 @@ public class MyHashTable<K, V> implements MyHash<K,V> {
         }
     }
 
+    @Override
+    public Set<K> keySet() {
+        Set<K> keySet = new HashSet<>();
+        for (NodeWithKeyValue<K, V> node : table) {
+            if (node != null && !node.isDeleted()) {
+                keySet.add(node.getKey());
+            }
+        }
+        return keySet;
+    }
 }

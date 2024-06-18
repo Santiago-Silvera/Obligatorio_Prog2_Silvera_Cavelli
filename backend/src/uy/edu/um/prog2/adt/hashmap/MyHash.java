@@ -2,6 +2,8 @@ package uy.edu.um.prog2.adt.hashmap;
 
 import uy.edu.um.prog2.adt.linkedlist.NodeWithKeyValue;
 
+import java.util.Set;
+
 public interface MyHash<K, V> {
 
     /**
@@ -45,4 +47,5 @@ public interface MyHash<K, V> {
     int size();
 
     NodeWithKeyValue<K, V>[] getTable();
+    Set<K> keySet();
 }

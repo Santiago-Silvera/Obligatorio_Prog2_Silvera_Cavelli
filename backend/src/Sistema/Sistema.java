@@ -1,7 +1,10 @@
 package Sistema;
 
+import lombok.Getter;
 import uy.edu.um.prog2.adt.hashmap.MyHash;
 import uy.edu.um.prog2.adt.hashmap.MyHashTable;
+import uy.edu.um.prog2.adt.heap.MyHeap;
+import uy.edu.um.prog2.adt.heap.MyHeapImpl;
 import uy.edu.um.prog2.adt.linkedlist.MyLinkedListImpl;
 import uy.edu.um.prog2.adt.linkedlist.MyList;
 
@@ -15,7 +18,7 @@ public class Sistema {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        CSVLoader loader = new CSVLoader("C:\\Users\\santi\\Downloads\\universal_top_spotify_songs.csv");
+        CSVLoader loader = new CSVLoader("C:\\Users\\2512i\\Downloads\\universal_top_spotify_songs.csv");
         loader.LoadCSV();
         long endTime = System.currentTimeMillis();
         System.out.println("Time elapsed loading CSV: " + (endTime - startTime)/1000 + "s");
@@ -50,7 +53,18 @@ public class Sistema {
                 }
                 break;
             case 2:
-                System.out.println("Sorry bro, no la hice todavia.");
+                System.out.println("Ingrese la fecha en formato YYYY-MM-DD");
+                String dateString = scanner.next();
+                Date fechaDada = CSVLoader.parseDate(dateString);
+                MyList<Song> top5Songs = consulta2(fechaDada);
+                if (top5Songs.size() == 0) {
+                    System.out.println("No hay datos para la fecha: " + dateString);
+                } else { //por la definición de la consulta, la única forma de que devuelva lista no vacía es con 5 elementos
+                    System.out.println("Top 5 canciones que aparecen en más top 50 en la fecha " + dateString + ":");
+                    for (Song song : top5Songs) {
+                        System.out.println(song.getName() + "de " + Arrays.toString(song.getArtist()));
+                    }
+                }
                 break;
             case 3:
                 System.out.println("Sorry bro, no la hice todavia.");
@@ -101,13 +115,92 @@ public class Sistema {
         return result;
     }
 
-    public static void consulta2() {
+    public static MyList<Song> consulta2(Date fechaDada) {
         /*
          Top 5 canciones que aparecen en más top 50 en un día dado. Las canciones deben
          estar ordenadas de manera descendente. Se espera que esta operación sea de
          orden n en notación Big O.
         */
-        return;
+        MyList<Song> top5 = new MyLinkedListImpl<>();
+
+        //primero verifico si la fecha existe en el hash
+        MyHash<String, MyList<Song>> countryToSongs = topSongsByDateCountry.get(fechaDada);
+        if (countryToSongs == null) {
+            return top5; //si no hay datos para esa fecha, retorna una lista vacía
+        }
+
+        //hash para contar apariciones de cada canción
+        MyHash<String, Integer> songCount = new MyHashTable<>(50, 0.75f);
+
+        //recorro todas las listas del top 50 para cada país en la fecha dada
+        for (String country : countryToSongs.keySet()) { //itero sobre los países
+            MyList<Song> songs = countryToSongs.get(country); //lista de canciones del país
+            for (Song song : songs) { //itero sobre las canciones
+                String songId = song.getSpotifyId(); // obtengo el ID de la canción
+                // incremento el contador de apariciones de la canción
+                if (songCount.containsKey(songId)) {
+                    songCount.put(songId, songCount.get(songId) + 1);
+                } else {
+                    songCount.put(songId, 1);
+                }
+            }
+        }
+
+        //utilizo un heap para almacenar las top 5 canciones
+        MyHeap<SongCountPair> heap = new MyHeapImpl<>(5, false); //Heap max, pues ordeno en forma decreciente
+
+        // itero sobre las canciones del hash en el conteo de canciones
+        for (String songId : songCount.keySet()) {
+            int count = songCount.get(songId); //obtengo el conteo de apariciones de la canción
+            Song exampleSong = getExampleSongFromId(fechaDada, songId); // Obtengo una instancia de la canción para obtener y mostrar su información
+
+            SongCountPair pair = new SongCountPair(exampleSong, count); //creo un par canción-conteo (clase interna definida más abajo)
+            if (heap.size() < 5) {
+                heap.insert(pair); //si el heap no está lleno, lo inserto directamente
+            } else if (pair.compareTo(heap.get()) > 0) {
+                // reemplazo el elemento del heap menor si el nuevo par es mayor
+                heap.delete();
+                heap.insert(pair);
+            }
+        }
+
+        //ahora convierto el heap en la lista final de resultados
+        while (heap.size() > 0) {
+            top5.add(heap.delete().getSong()); //extraigo las canciones del heap (en orden descendente)
+        }
+        return top5;
+    }
+
+    //método auxiliar para consulta 2 para obtener una instancia de canción desde su ID
+    private static Song getExampleSongFromId(Date fechaDada, String songId) {
+        MyHash<String, MyList<Song>> countryToSongs = topSongsByDateCountry.get(fechaDada);
+        for (String country : countryToSongs.keySet()) {
+            MyList<Song> songs = countryToSongs.get(country);
+            for (Song song : songs) {
+                if (song.getSpotifyId().equals(songId)) {
+                    return song;
+                }
+            }
+        }
+        return null;
+    }
+
+    //clase interna auxiliar para consulta 2 para manejar pares de canción y conteo
+    static class SongCountPair implements Comparable<SongCountPair> {
+        @Getter
+        private final Song song;
+        @Getter
+        private final int count;
+
+        public SongCountPair(Song song, int count) {
+            this.song = song;
+            this.count = count;
+        }
+
+        @Override
+        public int compareTo(SongCountPair o) {
+            return Integer.compare(this.count, o.count); //comparo por conteo de apariciones
+        }
     }
 
     public static void consulta3() {
