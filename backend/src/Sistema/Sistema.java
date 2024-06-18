@@ -23,7 +23,7 @@ public class Sistema {
         loader.LoadCSV();
         long endTime = System.currentTimeMillis();
         System.out.println("Time elapsed loading CSV: " + (endTime - startTime)/1000 + "s");
-        while (menu()) {}
+        while (menu());
     }
 
     public static boolean menu() {
@@ -97,6 +97,10 @@ public class Sistema {
                 System.out.println("Ingrese la fecha final en formato YYYY-MM-DD");
                 fechaFinal = CSVLoader.parseDate(scanner.next());
                 int songCount = consulta5(initialTempo, finalTempo, fechaInicial, fechaFinal);
+                if (songCount == -1) {
+                    System.out.println("Error en los datos ingresados");
+                    return true;
+                }
                 System.out.println("Cantidad de canciones con tempo entre " + initialTempo + " y " + finalTempo + " entre " + fechaInicial + " y " + fechaFinal + ": " + songCount);
                 break;
             case 6:
@@ -231,21 +235,24 @@ public class Sistema {
             return null;
         }
         String[] result = new String[7];
+        MyHash<String, Integer> artistCount = new MyHashTable<>(50, 0.75f);
         for (; fechaInicial.before(fechaFinal); fechaInicial.setTime(fechaInicial.getTime() + 86400000)) {
-            NodeWithKeyValue<String, Integer>[] topTable = topArtistByAppearance.get(fechaInicial).getTable();
-            for (NodeWithKeyValue<String, Integer> node : topTable) {
-                if (node != null) {
-                    // Add the node in order based on appearences (biggest counter first)
-                    for (int i = 0; i < 7; i++) {
-                        if (result[i] == null) {
-                            result[i] = node.getKey();
-                            break;
-                        }
-                        if (topArtistByAppearance.get(fechaInicial).get(result[i]) < node.getValue()) {
-                            result[i] = node.getKey();
-                            break;
-                        }
-                    }
+            NodeWithKeyValue<String, Integer>[] allArtistsForDate = topArtistByAppearance.get(fechaInicial).getTable();
+            for (NodeWithKeyValue<String, Integer> artist : allArtistsForDate) {
+                if (artist == null) continue;
+                Integer count = artist.getValue();
+                if (artistCount.containsKey(artist.getKey())) {
+                    count += artistCount.remove(artist.getKey());
+                }
+                artistCount.put(artist.getKey(), count);
+            }
+        }
+        for (NodeWithKeyValue<String, Integer> node : artistCount.getTable()) {
+            if (node == null) continue;
+            for (int i = 0; i < 7; i++) {
+                if (result[i] == null || node.getValue() > artistCount.get(result[i])) {
+                    result[i] = node.getKey();
+                    break;
                 }
             }
         }
@@ -277,18 +284,22 @@ public class Sistema {
             System.out.println("Initial date must be before final date");
             return -1;
         }
-        int counter = 0;
         // Este numero magico es un dia entero pero en segundos (creo)
+        MyHash<String, Song> cancionesEncontradas = new MyHashTable<>(50, 0.75f);
         for (; initialDate.before(finalDate); initialDate.setTime(initialDate.getTime() + 86400000)) {
             NodeWithKeyValue<String, MyList<Song>>[] allTopsForDate = topSongsByDateCountry.get(initialDate).getTable();
             for (NodeWithKeyValue<String, MyList<Song>> top : allTopsForDate) {
                 if (top == null) continue;
                 for (Song song : top.getValue()) {
-                    if (song.getTempo() >= initialTempo && song.getTempo() <= finalTempo) counter++;
+                    if (song.getTempo() >= initialTempo && song.getTempo() <= finalTempo) {
+                        if (!cancionesEncontradas.containsKey(song.getSpotifyId())) {
+                            cancionesEncontradas.put(song.getSpotifyId(), song);
+                        }
+                    }
                 }
             }
-            System.out.println("Date: " + initialDate + " Songs: " + counter);
+
         }
-        return counter;
+        return cancionesEncontradas.size();
     }
 }
