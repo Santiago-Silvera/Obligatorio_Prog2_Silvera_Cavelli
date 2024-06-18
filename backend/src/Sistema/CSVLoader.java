@@ -1,4 +1,3 @@
-
 package Sistema;
 
 import uy.edu.um.prog2.adt.hashmap.MyHashTable;
@@ -14,6 +13,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static Sistema.Sistema.topArtistByAppearance;
 import static Sistema.Sistema.topSongsByDateCountry;
 
 
@@ -38,14 +38,22 @@ public class CSVLoader {
 
                 if (!topSongsByDateCountry.containsKey(date)) {
                     topSongsByDateCountry.put(date, new MyHashTable<>(50, 0.75f));
-//                    System.out.println("Added date: " + date);
                 }
                 if (!topSongsByDateCountry.get(date).containsKey(country)) {
                     topSongsByDateCountry.get(date).put(country, new MyLinkedListImpl<>());
-//                    System.out.println("Added country: " + country + " on " + date);
                 }
                 topSongsByDateCountry.get(date).get(country).add(song);
-//                System.out.println("Added song: " + song.getName() + " by " + song.getArtist() + " in " + song.getCountry() + " on " + song.getDate());
+
+                if (!topArtistByAppearance.containsKey(date)) {
+                    topArtistByAppearance.put(date, new MyHashTable<>(50, 0.75f));
+                }
+                for (String artist : song.getArtist()) {
+                    if (!topArtistByAppearance.get(date).containsKey(artist)) {
+                        topArtistByAppearance.get(date).put(artist, 0);
+                    }
+                    Integer count = topArtistByAppearance.get(date).remove(artist);
+                    topArtistByAppearance.get(date).put(artist, count + 1);
+                }
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

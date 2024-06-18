@@ -75,7 +75,7 @@ public class MyHashTable<K, V> implements MyHash<K,V> {
             // Vamos buscando hasta encontrar o un null, en cuyo caso salimos y devolvemos null
             // o encontramos la key
             while (table[index] != null) {
-                if (table[index].getKey() == key && !table[index].isDeleted()) {
+                if (table[index].getKey().equals(key) && !table[index].isDeleted()) {
                     V value = table[index].getValue();
                     table[index].setDeleted(true);
                     size--;
@@ -140,11 +140,4 @@ public class MyHashTable<K, V> implements MyHash<K,V> {
     private int hash(K key) {
         return abs(key.hashCode() % CAPACITY);
     }
-
-    public void showHash() {
-        for (NodeWithKeyValue<K, V> node : table) {
-            System.out.println("" + node);
-        }
-    }
-
 }

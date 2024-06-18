@@ -4,6 +4,7 @@ import uy.edu.um.prog2.adt.hashmap.MyHash;
 import uy.edu.um.prog2.adt.hashmap.MyHashTable;
 import uy.edu.um.prog2.adt.linkedlist.MyLinkedListImpl;
 import uy.edu.um.prog2.adt.linkedlist.MyList;
+import uy.edu.um.prog2.adt.linkedlist.NodeWithKeyValue;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -11,7 +12,7 @@ import java.util.Scanner;
 
 public class Sistema {
     public static MyHash<Date, MyHash<String, MyList<Song>>> topSongsByDateCountry = new MyHashTable<>(50, 0.75f);
-    // otros tads
+    public static MyHash<Date, MyHash<String, Integer>> topArtistByAppearance = new MyHashTable<>(50, 0.75f);
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
@@ -53,7 +54,14 @@ public class Sistema {
                 System.out.println("Sorry bro, no la hice todavia.");
                 break;
             case 3:
-                System.out.println("Sorry bro, no la hice todavia.");
+                System.out.println("Ingrese la fecha inicial en formato YYYY-MM-DD");
+                Date fechaInicial = CSVLoader.parseDate(scanner.next());
+                System.out.println("Ingrese la fecha final en formato YYYY-MM-DD");
+                Date fechaFinal = CSVLoader.parseDate(scanner.next());
+                String[] topArtists = consulta3(fechaInicial, fechaFinal);
+                for (String artist : topArtists) {
+                    System.out.println(artist);
+                }
                 break;
             case 4:
                 System.out.println("Ingrese la fecha en formato YYYY-MM-DD");
@@ -110,13 +118,36 @@ public class Sistema {
         return;
     }
 
-    public static void consulta3() {
+    public static String[] consulta3(Date fechaInicial, Date fechaFinal) {
         /*
          Top 7 artistas que más aparecen en los top 50 para un rango de fechas dado. Cada
          aparición (como cada canción) distinta debe contarse, y se debe separar las
          canciones que tengan más de un artista contabilizando una aparición para cada uno.
         */
-
+        if (fechaInicial.after(fechaFinal)) {
+            System.out.println("Fecha inicial debe ser anterior a fecha final");
+            return null;
+        }
+        String[] result = new String[7];
+        for (; fechaInicial.before(fechaFinal); fechaInicial.setTime(fechaInicial.getTime() + 86400000)) {
+            NodeWithKeyValue<String, Integer>[] topTable = topArtistByAppearance.get(fechaInicial).getTable();
+            for (NodeWithKeyValue<String, Integer> node : topTable) {
+                if (node != null) {
+                    // Add the node in order based on appearences (biggest counter first)
+                    for (int i = 0; i < 7; i++) {
+                        if (result[i] == null) {
+                            result[i] = node.getKey();
+                            break;
+                        }
+                        if (topArtistByAppearance.get(fechaInicial).get(result[i]) < node.getValue()) {
+                            result[i] = node.getKey();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     public static int consulta4(Date date, String country, String artist) {
