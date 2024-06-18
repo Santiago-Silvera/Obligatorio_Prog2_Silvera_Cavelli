@@ -19,7 +19,7 @@ public class Sistema {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        CSVLoader loader = new CSVLoader("C:\\Users\\2512i\\Downloads\\universal_top_spotify_songs.csv");
+        CSVLoader loader = new CSVLoader("C:\\Users\\santi\\Downloads\\universal_top_spotify_songs.csv");
         loader.LoadCSV();
         long endTime = System.currentTimeMillis();
         System.out.println("Time elapsed loading CSV: " + (endTime - startTime)/1000 + "s");
@@ -88,7 +88,16 @@ public class Sistema {
                 System.out.println(artist + " aparece " + appearances + " veces en " + country + " el " + date);
                 break;
             case 5:
-                System.out.println("Sorry bro, no la hice todavia.");
+                System.out.println("Ingrese el tempo inicial");
+                float initialTempo = scanner.nextFloat();
+                System.out.println("Ingrese el tempo final");
+                float finalTempo = scanner.nextFloat();
+                System.out.println("Ingrese la fecha inicial en formato YYYY-MM-DD");
+                fechaInicial = CSVLoader.parseDate(scanner.next());
+                System.out.println("Ingrese la fecha final en formato YYYY-MM-DD");
+                fechaFinal = CSVLoader.parseDate(scanner.next());
+                int songCount = consulta5(initialTempo, finalTempo, fechaInicial, fechaFinal);
+                System.out.println("Cantidad de canciones con tempo entre " + initialTempo + " y " + finalTempo + " entre " + fechaInicial + " y " + fechaFinal + ": " + songCount);
                 break;
             case 6:
                 System.out.println("Gracias por usar el sistema de consulta de canciones de Spotify");
@@ -256,10 +265,30 @@ public class Sistema {
         return counter;
     }
 
-    public static void consulta5() {
+    public static int consulta5(float initialTempo, float finalTempo, Date initialDate, Date finalDate) {
         /* 
          Cantidad de canciones con un tempo en un rango específico para un rango específico de fechas.
         */
-        return;
+        if (initialTempo > finalTempo) {
+            System.out.println("Initial tempo must be lower than final tempo");
+            return -1;
+        }
+        if (initialDate.after(finalDate)) {
+            System.out.println("Initial date must be before final date");
+            return -1;
+        }
+        int counter = 0;
+        // Este numero magico es un dia entero pero en segundos (creo)
+        for (; initialDate.before(finalDate); initialDate.setTime(initialDate.getTime() + 86400000)) {
+            NodeWithKeyValue<String, MyList<Song>>[] allTopsForDate = topSongsByDateCountry.get(initialDate).getTable();
+            for (NodeWithKeyValue<String, MyList<Song>> top : allTopsForDate) {
+                if (top == null) continue;
+                for (Song song : top.getValue()) {
+                    if (song.getTempo() >= initialTempo && song.getTempo() <= finalTempo) counter++;
+                }
+            }
+            System.out.println("Date: " + initialDate + " Songs: " + counter);
+        }
+        return counter;
     }
 }
