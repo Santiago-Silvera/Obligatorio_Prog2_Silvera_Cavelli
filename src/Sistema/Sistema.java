@@ -9,6 +9,7 @@ import uy.edu.um.prog2.adt.linkedlist.MyLinkedListImpl;
 import uy.edu.um.prog2.adt.linkedlist.MyList;
 import uy.edu.um.prog2.adt.linkedlist.NodeWithKeyValue;
 
+import java.sql.SQLOutput;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
@@ -19,7 +20,9 @@ public class Sistema {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        CSVLoader loader = new CSVLoader("C:\\Users\\santi\\Downloads\\universal_top_spotify_songs.csv");
+        String path = "C:\\Users\\santi\\Downloads\\universal_top_spotify_songs.csv";
+        System.out.println("Loading CSV from: " + path);
+        CSVLoader loader = new CSVLoader(path);
         loader.LoadCSV();
         long endTime = System.currentTimeMillis();
         System.out.println("Time elapsed loading CSV: " + (endTime - startTime)/1000 + "s");
@@ -120,6 +123,10 @@ public class Sistema {
          estar ordenadas de manera descendente. El día será ingresado en el formato
          YYYY-MM-DD.
         */
+        if (country.equalsIgnoreCase("GLOBAL")) {
+            country = "";
+        }
+        country = country.toUpperCase();
         MyList<Song> top;
         try {
             top = topSongsByDateCountry.get(date).get(country);
@@ -263,6 +270,15 @@ public class Sistema {
         /*
          Cantidad de veces que aparece un artista específico en un top 50 en una fecha dada.
         */
+        if (country == null || artist == null || date == null) {
+            System.out.println("Invalid Data");
+            return -1;
+        }
+        if (country.equalsIgnoreCase("GLOBAL")) {
+            country = "";
+        }
+        country = country.toUpperCase();
+        artist = artist.toUpperCase();
         MyList<Song> top = topSongsByDateCountry.get(date).get(country);
         int counter = 0;
         for (Song song : top) {
@@ -276,6 +292,14 @@ public class Sistema {
         /* 
          Cantidad de canciones con un tempo en un rango específico para un rango específico de fechas.
         */
+        if (initialTempo < 0 || finalTempo < 0) {
+            System.out.println("Tempo must be positive");
+            return -1;
+        }
+        if (initialDate == null || finalDate == null) {
+            System.out.println("Invalid dates");
+            return -1;
+        }
         if (initialTempo > finalTempo) {
             System.out.println("Initial tempo must be lower than final tempo");
             return -1;
