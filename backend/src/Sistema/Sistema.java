@@ -63,7 +63,7 @@ public class Sistema {
                 } else { //por la definición de la consulta, la única forma de que devuelva lista no vacía es con 5 elementos
                     System.out.println("Top 5 canciones que aparecen en más top 50 en la fecha " + dateString + ":");
                     for (Song song : top5Songs) {
-                        System.out.println(song.getName() + "de " + Arrays.toString(song.getArtist()));
+                        System.out.println(song.getName() + " de " + Arrays.toString(song.getArtist()));
                     }
                 }
                 break;
@@ -160,7 +160,7 @@ public class Sistema {
                 String songId = song.getSpotifyId(); // obtengo el ID de la canción
                 // incremento el contador de apariciones de la canción
                 if (songCount.containsKey(songId)) {
-                    songCount.put(songId, songCount.get(songId) + 1);
+                    songCount.put(songId, songCount.remove(songId) + 1);
                 } else {
                     songCount.put(songId, 1);
                 }
