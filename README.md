@@ -14,7 +14,7 @@ Si se desea saber informacion sobre el top global se puede colocar "GLOBAL" (es 
 
 ## Diagrama UML
 
-![]{./cavelli_silvera_diagrama.drawio.png}
+![a]{./cavelli_silvera_diagrama.drawio.png}
 
 ## Descripcion de los metodos principales
 
@@ -81,5 +81,6 @@ Por utimo, se devuelve el tamaño del hash.
 
 ## Profiler
 
-![]{./profiler.png}
-![]{./time.png}
+![b]{./profiler.png}
+
+![c]{./time.png}
