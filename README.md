@@ -14,7 +14,7 @@ Si se desea saber informacion sobre el top global se puede colocar "GLOBAL" (es 
 
 ## Diagrama UML
 
-![Diagrama UML]{"../../"}
+![]{./cavelli_silvera_diagrama.drawio.png}
 
 ## Descripcion de los metodos principales
 
@@ -77,3 +77,9 @@ Al final,se devuelve el contador.
 Primero se solicita al usuario un rango de fechas y un rango de tempos. Luego de esto, se itera sobre el rango de fechas en topSongsByDateCountry, donde para cada fecha se miran todos los paises y para cada pais se miran todas las canciones.
 Para cada cancion se verifica que su tempo este en el rango de tempos y si es asi se agrega esta cancion a un hash. 
 Por utimo, se devuelve el tamaño del hash.
+
+
+## Profiler
+
+![]{./profiler.png}
+![]{./time.png}
