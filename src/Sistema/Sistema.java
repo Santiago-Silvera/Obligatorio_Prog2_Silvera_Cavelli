@@ -9,7 +9,6 @@ import uy.edu.um.prog2.adt.linkedlist.MyLinkedListImpl;
 import uy.edu.um.prog2.adt.linkedlist.MyList;
 import uy.edu.um.prog2.adt.linkedlist.NodeWithKeyValue;
 
-import java.sql.SQLOutput;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
@@ -21,11 +20,11 @@ public class Sistema {
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
         String path = "C:\\Users\\santi\\Downloads\\universal_top_spotify_songs.csv";
-        System.out.println("Loading CSV from: " + path);
+        System.out.println("Cargando CSV de la direccion: " + path);
         CSVLoader loader = new CSVLoader(path);
         loader.LoadCSV();
         long endTime = System.currentTimeMillis();
-        System.out.println("Time elapsed loading CSV: " + (endTime - startTime)/1000 + "s");
+        System.out.println("Tiempo en cargar el archivo CSV: " + (endTime - startTime)/1000 + "s");
         while (menu());
     }
 
@@ -49,11 +48,11 @@ public class Sistema {
                 String country = scanner.next();
                 MyList<Song> top = consulta1(date, country);
                 if (top == null) {
-                    System.out.println("No data for " + date + " in " + country);
+                    System.out.println("Sin datos para " + date + " en " + country);
                     return true;
                 }
                 for (Song song : top) {
-                    System.out.println(song.getName() + " by " + Arrays.toString(song.getArtist()));
+                    System.out.println(song.getName() + " de " + Arrays.toString(song.getArtist()));
                 }
                 break;
             case 2:
@@ -271,7 +270,7 @@ public class Sistema {
          Cantidad de veces que aparece un artista específico en un top 50 en una fecha dada.
         */
         if (country == null || artist == null || date == null) {
-            System.out.println("Invalid Data");
+            System.out.println("Datos invalidos");
             return -1;
         }
         if (country.equalsIgnoreCase("GLOBAL")) {
@@ -293,19 +292,19 @@ public class Sistema {
          Cantidad de canciones con un tempo en un rango específico para un rango específico de fechas.
         */
         if (initialTempo < 0 || finalTempo < 0) {
-            System.out.println("Tempo must be positive");
+            System.out.println("El tempo debe ser positivo");
             return -1;
         }
         if (initialDate == null || finalDate == null) {
-            System.out.println("Invalid dates");
+            System.out.println("Fechas invalidas");
             return -1;
         }
         if (initialTempo > finalTempo) {
-            System.out.println("Initial tempo must be lower than final tempo");
+            System.out.println("El tempo inicial debe ser menor que el tempo final");
             return -1;
         }
         if (initialDate.after(finalDate)) {
-            System.out.println("Initial date must be before final date");
+            System.out.println("Fecha inicial debe ser menor que la fecha final");
             return -1;
         }
         // Este numero magico es un dia entero pero en segundos (creo)
