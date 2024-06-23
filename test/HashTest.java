@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -104,4 +105,44 @@ public class HashTest {
         // Remove debe devolver null si la key no existe
         assertNull(hash.remove(1));
     }
+
+    // Tests para el método keySet
+    @Test
+    public void keySetTest1() {
+        // Verificamos que inicialmente el conjunto de keys está vacío
+        Set<Integer> keys = hash.keySet();
+        assertTrue(keys.isEmpty());
+    }
+
+    @Test
+    public void keySetTest2() {
+        // Agregamos elementos al hash
+        hash.put(1, "Valor 1");
+        hash.put(2, "Valor 2");
+        hash.put(3, "Valor 3");
+
+        // Verificamos que el conjunto de keys contiene todas las claves agregadas
+        Set<Integer> keys = hash.keySet();
+        assertEquals(3, keys.size());
+        assertTrue(keys.contains(1));
+        assertTrue(keys.contains(2));
+        assertTrue(keys.contains(3));
+    }
+
+    @Test
+    public void keySetTest3() {
+        // Agregamos elementos y luego removemos algunos
+        hash.put(1, "Valor 1");
+        hash.put(2, "Valor 2");
+        hash.put(3, "Valor 3");
+        hash.remove(2);
+
+        // Verificamos que el conjunto de keys contiene solo las claves no eliminadas
+        Set<Integer> keys = hash.keySet();
+        assertEquals(2, keys.size());
+        assertTrue(keys.contains(1));
+        assertFalse(keys.contains(2));
+        assertTrue(keys.contains(3));
+    }
+
 }

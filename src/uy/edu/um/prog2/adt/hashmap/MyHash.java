@@ -47,5 +47,6 @@ public interface MyHash<K, V> {
     int size();
 
     NodeWithKeyValue<K, V>[] getTable();
+
     Set<K> keySet();
 }
